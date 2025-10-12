@@ -1,0 +1,38 @@
+package com.songguesser.backend.exeptions;
+
+import org.springframework.http.HttpStatus;
+
+public enum ErrorEnum implements IEnumError {
+    ERROR_INESPERADO(1000,"songguesser.messages.error.inesperado",HttpStatus.INTERNAL_SERVER_ERROR),
+    DATO_SIN_VALOR_SELECCIONADO(1001,"songguesser.messages.error.dato.sin.valor.seleccionado",HttpStatus.BAD_REQUEST),
+    DATO_SIN_VALOR_INGRESADO(1002,"songguesser.messages.error.dato.sin.valor.ingresado",HttpStatus.BAD_REQUEST),
+    DATO_TIPO_INCORRECTO(1003,"songguesser.messages.error.dato.tipo.incorrecto",HttpStatus.BAD_REQUEST),
+    DATO_VALOR_INCORRECTO(1004,"songguesser.messages.error.dato.valor.incorrecto",HttpStatus.BAD_REQUEST),
+    EJEMPLO_CON_PARAMETROS(1005,"songguesser.messages.error.ejemplo.con.parametros",HttpStatus.BAD_REQUEST),
+    ERROR_API(1006,"songguesser.messages.error.api",HttpStatus.INTERNAL_SERVER_ERROR);
+
+    ErrorEnum(Integer code, String message, HttpStatus status) {
+        this.code = code;
+        this.message = message;
+        this.status = status;
+    }
+
+    private Integer code;
+    private String message;
+    private HttpStatus status;
+
+    @Override
+    public Integer code() {
+        return this.code;
+    }
+
+    @Override
+    public String message() {
+        return this.message;
+    }
+
+    @Override
+    public HttpStatus status() {
+        return this.status;
+    }
+}
