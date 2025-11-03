@@ -4,7 +4,18 @@ management:
       base-path: /
       exposure:
         include: "health,info"
+
 server:
-  port :  9003
+  port: 9003
   servlet:
-    contextPath: /backend
+    context-path: /backend
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
+        loggerLevel: basic
+      itunesconnector:
+        url: http://localhost:9002/conector
