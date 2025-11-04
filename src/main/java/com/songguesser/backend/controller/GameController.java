@@ -24,10 +24,17 @@ public class GameController {
     }
 
     @PostMapping("/{gameId}/round")
-    public ResponseEntity<RoundResponseDto> addRound(@PathVariable Long gameId) {
-        log.info("→ Agregando ronda a partida {}", gameId);
-        RoundResponseDto dto = gameService.addRound(gameId);
-        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+    public ResponseEntity<RoundResponseDto> addRound(@PathVariable Long gameId, @RequestBody(required = false) GuessDto guess) {
+        // If a guess is provided in the body, process it. Otherwise, add a new round.
+        if (guess != null && guess.getGuess() != null && !guess.getGuess().isBlank()) {
+            log.info("→ Procesando respuesta para partida {}: {}", gameId, guess.getGuess());
+            RoundResponseDto dto = gameService.submitGuess(gameId, guess);
+            return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+        } else {
+            log.info("→ Agregando ronda a partida {}", gameId);
+            RoundResponseDto dto = gameService.addRound(gameId);
+            return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/{gameId}/surrender")
