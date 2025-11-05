@@ -8,6 +8,6 @@ public interface GameService {
     GameStartResponseDto startNewGame();
     RoundResponseDto addRound(Long gameId);
     RoundResponseDto submitGuess(Long gameId, GuessDto guessDto);
-    void surrender(Long gameId);
+    Optional<GameSummaryDto> surrender(Long gameId);
     Optional<GameSummaryDto> getSummary(Long gameId);
 }

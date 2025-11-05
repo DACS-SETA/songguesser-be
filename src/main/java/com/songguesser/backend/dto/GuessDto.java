@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class GuessDto {
     private String guess;
+    private Integer time;
 }

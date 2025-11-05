@@ -38,10 +38,11 @@ public class GameController {
     }
 
     @PostMapping("/{gameId}/surrender")
-    public ResponseEntity<Void> surrender(@PathVariable Long gameId) {
+    public ResponseEntity<GameSummaryDto> surrender(@PathVariable Long gameId) {
         log.info("→ Partida {} marcada como rendida", gameId);
-        gameService.surrender(gameId);
-        return ResponseEntity.ok().build();
+        return gameService.surrender(gameId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{gameId}/summary")

@@ -68,6 +68,9 @@ public class GameServiceImpl implements GameService {
 
         Game game = optionalGame.get();
 
+    // If the game is already finished, do not process guesses
+    if (game.isFinished()) return null;
+
         List<Round> existingRounds = roundRepository.findByGame(game);
         List<Long> usedSongIds = existingRounds.stream()
                 .map(r -> r.getSong().getId())
@@ -94,13 +97,17 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void surrender(Long gameId) {
-        gameRepository.findById(gameId).ifPresent(game -> {
+    public Optional<GameSummaryDto> surrender(Long gameId) {
+        Optional<Game> optionalGame = gameRepository.findById(gameId);
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
             game.setFinished(true);
             game.setEndDate(LocalDateTime.now());
             gameRepository.save(game);
             log.info("Partida {} marcada como terminada (rendición)", gameId);
-        });
+            return getSummary(gameId);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -181,7 +188,15 @@ public class GameServiceImpl implements GameService {
         if (userGuess.trim().equalsIgnoreCase(correctAnswer.trim())) {
             // Correct
             currentRound.setCorrect(true);
-            int score = 100; // Simple scoring; adapt to real logic if needed
+            Integer time = guessDto.getTime() != null ? guessDto.getTime() : 30;
+            if (time > 30) time = 30;
+            if (time < 0) time = 0;
+
+            int baseScore = 100;
+            int maxBonus = 900;
+            
+            // Fórmula de decaimiento lineal
+            int score = baseScore + (int) (maxBonus * ( (30.0 - time) / 30.0 ));
             currentRound.setScoreObtained(score);
             response.setIsCorrect(true);
             response.setScore(score);
