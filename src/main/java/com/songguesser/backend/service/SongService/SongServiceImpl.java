@@ -48,10 +48,13 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Optional<SongDto> getRandomSong() {
-        Optional<Song> randomSong = songRepository.getRandomSong();
-        if (randomSong.isEmpty()) return Optional.empty();
+        return mapSongToDto(songRepository.getRandomSong());
+    }
 
-        Song songEntity = randomSong.get();
+    private Optional<SongDto> mapSongToDto(Optional<Song> songEntityOpt) {
+        if (songEntityOpt.isEmpty()) return Optional.empty();
+
+        Song songEntity = songEntityOpt.get();
 
         SongDto songDto = itunesConnector.getById(songEntity.getItunesSongId());
         if (songDto == null) return Optional.empty();
@@ -60,6 +63,17 @@ public class SongServiceImpl implements SongService {
         songDto.setItunesId(songEntity.getItunesSongId());
 
         return Optional.of(songDto);
+    }
+
+    @Override
+    public Optional<SongDto> getRandomSong(List<Long> excludedIds) {
+        Optional<Song> randomSong;
+        if (excludedIds == null || excludedIds.isEmpty()) {
+            randomSong = songRepository.getRandomSong();
+        } else {
+            randomSong = songRepository.getRandomSongNotIn(excludedIds);
+        }
+        return mapSongToDto(randomSong);
     }
 
     @Override

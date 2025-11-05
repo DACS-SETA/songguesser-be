@@ -77,9 +77,7 @@ public class GameServiceImpl implements GameService {
                 .filter(Objects::nonNull)
                 .toList();
 
-        SongDto randomSong = songService.getRandomSong()
-                .filter(s -> !usedSongIds.contains(s.getInternalId()))
-                .orElse(null);
+    SongDto randomSong = songService.getRandomSong(usedSongIds).orElse(null);
 
         if (randomSong == null) return null;
 
