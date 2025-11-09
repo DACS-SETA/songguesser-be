@@ -25,6 +25,10 @@ public class GameServiceImpl implements GameService {
 
     @Autowired
     private SongService songService;
+    
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Autowired
     private com.songguesser.backend.conector.ItunesConnector itunesConnector;
@@ -33,14 +37,22 @@ public class GameServiceImpl implements GameService {
     private com.songguesser.backend.model.repository.SongRepository songRepository;
 
     @Override
-    public GameStartResponseDto startNewGame() {
+    public GameStartResponseDto startNewGame(String keycloakId) {
+        Optional<User> userOpt = userRepository.findByKeycloakId(keycloakId);
+        if (userOpt.isEmpty()) {
+            log.warn("No existe usuario con keycloakId={} — no se puede crear partida.", keycloakId);
+            return null;
+        }
+
+        User user = userOpt.get();
+
         Game game = new Game();
+        game.setUser(user);
         gameRepository.save(game);
 
-        log.info("Nueva partida creada con ID {}", game.getId());
+        log.info("Nueva partida creada con ID {} para usuario {}", game.getId(), user.getUsername());
 
         SongDto randomSong = songService.getRandomSong().orElse(null);
-
         if (randomSong == null) {
             log.warn("No se pudo obtener una canción inicial para la partida {}", game.getId());
             return null;
@@ -58,8 +70,10 @@ public class GameServiceImpl implements GameService {
         dto.setGameId(game.getId());
         dto.setRoundId(round.getId());
         dto.setSong(randomSong);
+
         return dto;
     }
+
 
     @Override
     public RoundResponseDto addRound(Long gameId) {

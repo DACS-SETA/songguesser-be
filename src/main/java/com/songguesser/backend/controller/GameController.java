@@ -15,13 +15,14 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
-
+ 
     @PostMapping("/start")
-    public ResponseEntity<GameStartResponseDto> startGame() {
-        log.info("→ Iniciando nueva partida");
-        GameStartResponseDto dto = gameService.startNewGame();
-        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<GameStartResponseDto> startGame(@RequestParam String keycloakId) {
+        log.info("→ Iniciando nueva partida para usuario {}", keycloakId);
+        GameStartResponseDto dto = gameService.startNewGame(keycloakId);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.badRequest().build();
     }
+
 
     @PostMapping("/{gameId}/round")
     public ResponseEntity<RoundResponseDto> addRound(@PathVariable Long gameId, @RequestBody(required = false) GuessDto guess) {
