@@ -116,6 +116,16 @@ public class GameServiceImpl implements GameService {
             game.setFinished(true);
             game.setEndDate(LocalDateTime.now());
             gameRepository.save(game);
+            
+            
+            User user = game.getUser();
+            if (user != null) {
+                int prev = user.getTotalScore() != null ? user.getTotalScore() : 0;
+                int gameScore = game.getScoreTotal() != null ? game.getScoreTotal() : 0;
+                user.setTotalScore(prev + gameScore);
+                userRepository.save(user);
+            }
+            
             log.info("Partida {} marcada como terminada (rendición)", gameId);
             return getSummary(gameId);
         }

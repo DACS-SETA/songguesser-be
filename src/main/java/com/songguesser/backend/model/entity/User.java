@@ -21,4 +21,7 @@ public class User {
     
     @Column(name = "user_email")
     private String email;
+    
+    @Column(name = "total_score")
+    private Integer totalScore = 0;
 }
