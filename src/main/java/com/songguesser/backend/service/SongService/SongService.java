@@ -15,5 +15,6 @@ public interface SongService {
     Optional<Song> getById(Long id);
     Boolean existById(Long id);
     Optional<SongDto> getRandomSong();
-    Optional<SongDto> getRandomSong(java.util.List<Long> excludedIds);
+    Optional<SongDto> getRandomSong(java.util.List<Long> excludedIds, String languageFilter);
+    Optional<SongDto> getRandomSong(String languageFilter);
 }

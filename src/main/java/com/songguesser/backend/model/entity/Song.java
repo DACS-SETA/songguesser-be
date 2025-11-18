@@ -22,4 +22,7 @@ public class Song {
 
     @Column(name = "itunes_song_id")
     private Long itunesSongId;
+    
+    @Column(name = "language")
+    private String language;
 }

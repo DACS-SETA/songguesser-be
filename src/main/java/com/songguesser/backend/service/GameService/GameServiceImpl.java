@@ -37,7 +37,7 @@ public class GameServiceImpl implements GameService {
     private com.songguesser.backend.model.repository.SongRepository songRepository;
 
     @Override
-    public GameStartResponseDto startNewGame(String keycloakId) {
+    public GameStartResponseDto startNewGame(String keycloakId, String languageFilter) {
         Optional<User> userOpt = userRepository.findByKeycloakId(keycloakId);
         if (userOpt.isEmpty()) {
             log.warn("No existe usuario con keycloakId={} — no se puede crear partida.", keycloakId);
@@ -52,7 +52,7 @@ public class GameServiceImpl implements GameService {
 
         log.info("Nueva partida creada con ID {} para usuario {}", game.getId(), user.getUsername());
 
-        SongDto randomSong = songService.getRandomSong().orElse(null);
+        SongDto randomSong = songService.getRandomSong(languageFilter).orElse(null);
         if (randomSong == null) {
             log.warn("No se pudo obtener una canción inicial para la partida {}", game.getId());
             return null;
@@ -76,7 +76,7 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
-    public RoundResponseDto addRound(Long gameId) {
+    public RoundResponseDto addRound(Long gameId, String languageFilter) {
         Optional<Game> optionalGame = gameRepository.findById(gameId);
         if (optionalGame.isEmpty()) return null;
 
@@ -91,7 +91,7 @@ public class GameServiceImpl implements GameService {
                 .filter(Objects::nonNull)
                 .toList();
 
-    SongDto randomSong = songService.getRandomSong(usedSongIds).orElse(null);
+    SongDto randomSong = songService.getRandomSong(usedSongIds, languageFilter).orElse(null);
 
         if (randomSong == null) return null;
 

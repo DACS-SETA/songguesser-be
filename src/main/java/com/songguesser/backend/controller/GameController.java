@@ -17,23 +17,23 @@ public class GameController {
     private GameService gameService;
  
     @PostMapping("/start")
-    public ResponseEntity<GameStartResponseDto> startGame(@RequestParam String keycloakId) {
-        log.info("→ Iniciando nueva partida para usuario {}", keycloakId);
-        GameStartResponseDto dto = gameService.startNewGame(keycloakId);
+    public ResponseEntity<GameStartResponseDto> startGame(@RequestParam String keycloakId, @RequestParam(required = false) String language) {
+        log.info("→ Iniciando nueva partida para usuario {} con idioma {}", keycloakId, language);
+        GameStartResponseDto dto = gameService.startNewGame(keycloakId, language);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.badRequest().build();
     }
 
 
     @PostMapping("/{gameId}/round")
-    public ResponseEntity<RoundResponseDto> addRound(@PathVariable Long gameId, @RequestBody(required = false) GuessDto guess) {
+    public ResponseEntity<RoundResponseDto> addRound(@PathVariable Long gameId, @RequestBody(required = false) GuessDto guess, @RequestParam(required = false) String language) {
         // If a guess is provided in the body, process it. Otherwise, add a new round.
         if (guess != null && guess.getGuess() != null && !guess.getGuess().isBlank()) {
             log.info("→ Procesando respuesta para partida {}: {}", gameId, guess.getGuess());
             RoundResponseDto dto = gameService.submitGuess(gameId, guess);
             return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
         } else {
-            log.info("→ Agregando ronda a partida {}", gameId);
-            RoundResponseDto dto = gameService.addRound(gameId);
+            log.info("→ Agregando ronda a partida {} con idioma {}", gameId, language);
+            RoundResponseDto dto = gameService.addRound(gameId, language);
             return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
         }
     }

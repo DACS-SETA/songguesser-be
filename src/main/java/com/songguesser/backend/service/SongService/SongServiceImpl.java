@@ -66,14 +66,19 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public Optional<SongDto> getRandomSong(List<Long> excludedIds) {
+    public Optional<SongDto> getRandomSong(List<Long> excludedIds, String languageFilter) {
         Optional<Song> randomSong;
         if (excludedIds == null || excludedIds.isEmpty()) {
-            randomSong = songRepository.getRandomSong();
+            randomSong = songRepository.getRandomSong(languageFilter);
         } else {
-            randomSong = songRepository.getRandomSongNotIn(excludedIds);
+            randomSong = songRepository.getRandomSongNotIn(excludedIds, languageFilter);
         }
         return mapSongToDto(randomSong);
+    }
+
+    @Override
+    public Optional<SongDto> getRandomSong(String languageFilter) {
+        return getRandomSong(null, languageFilter);
     }
 
     @Override
