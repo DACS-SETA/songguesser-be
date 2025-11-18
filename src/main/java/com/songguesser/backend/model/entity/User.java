@@ -22,8 +22,12 @@ public class User {
     @Column(name = "user_email")
     private String email;
     
+
     @Column(name = "total_score")
     private Integer totalScore = 0;
+
+    @Column(name = "games_played")
+    private Integer gamesPlayed = 0;
 
     @Column(name = "avatar_url", columnDefinition = "TEXT")
     private String avatarUrl;

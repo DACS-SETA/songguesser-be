@@ -10,4 +10,5 @@ public interface GameService {
     RoundResponseDto submitGuess(Long gameId, GuessDto guessDto);
     Optional<GameSummaryDto> surrender(Long gameId);
     Optional<GameSummaryDto> getSummary(Long gameId);
+    Optional<GameSummaryDto> finish(Long gameId);
 }

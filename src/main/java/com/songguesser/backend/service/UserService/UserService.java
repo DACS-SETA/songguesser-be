@@ -53,12 +53,11 @@ public class UserService {
     public UserProfileDto getUserProfile(String keycloakId) {
         User user = userRepository.findByKeycloakId(keycloakId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        long gamesPlayed = gameRepository.countByUser(user);
         UserProfileDto dto = new UserProfileDto();
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setTotalScore(user.getTotalScore());
-        dto.setGamesPlayed(gamesPlayed);
+        dto.setGamesPlayed(user.getGamesPlayed() != null ? user.getGamesPlayed().longValue() : 0L);
         dto.setAvatarUrl(user.getAvatarUrl());
         return dto;
     }

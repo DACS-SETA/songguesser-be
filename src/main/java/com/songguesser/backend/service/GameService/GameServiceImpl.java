@@ -120,13 +120,39 @@ public class GameServiceImpl implements GameService {
             
             User user = game.getUser();
             if (user != null) {
-                int prev = user.getTotalScore() != null ? user.getTotalScore() : 0;
+                int prevScore = user.getTotalScore() != null ? user.getTotalScore() : 0;
                 int gameScore = game.getScoreTotal() != null ? game.getScoreTotal() : 0;
-                user.setTotalScore(prev + gameScore);
+                user.setTotalScore(prevScore + gameScore);
+                user.setGamesPlayed((user.getGamesPlayed() == null ? 0 : user.getGamesPlayed()) + 1);
                 userRepository.save(user);
             }
             
             log.info("Partida {} marcada como terminada (rendición)", gameId);
+            return getSummary(gameId);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<GameSummaryDto> finish(Long gameId) {
+        Optional<Game> optionalGame = gameRepository.findById(gameId);
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
+            game.setFinished(true);
+            game.setEndDate(LocalDateTime.now());
+            
+            User user = game.getUser();
+            if (user != null) {
+                int prevScore = user.getTotalScore() != null ? user.getTotalScore() : 0;
+                int gameScore = game.getScoreTotal() != null ? game.getScoreTotal() : 0;
+                user.setTotalScore(prevScore + gameScore);
+                user.setGamesPlayed((user.getGamesPlayed() == null ? 0 : user.getGamesPlayed()) + 1);
+                userRepository.save(user);
+            }
+            
+            gameRepository.save(game);
+            
+            log.info("Partida {} finalizada exitosamente", gameId);
             return getSummary(gameId);
         }
         return Optional.empty();

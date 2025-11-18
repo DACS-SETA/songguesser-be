@@ -46,6 +46,14 @@ public class GameController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/{gameId}/finish")
+    public ResponseEntity<GameSummaryDto> finish(@PathVariable Long gameId) {
+        log.info("→ Finalizando partida {}", gameId);
+        return gameService.finish(gameId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{gameId}/summary")
     public ResponseEntity<GameSummaryDto> getSummary(@PathVariable Long gameId) {
         log.info("→ Resumen de la partida {}", gameId);
