@@ -24,4 +24,7 @@ public class User {
     
     @Column(name = "total_score")
     private Integer totalScore = 0;
+
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
+    private String avatarUrl;
 }

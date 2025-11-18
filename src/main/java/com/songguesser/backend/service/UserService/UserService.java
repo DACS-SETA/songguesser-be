@@ -1,9 +1,12 @@
 package com.songguesser.backend.service.UserService;
 
 
+import com.songguesser.backend.dto.UpdateProfileDto;
 import com.songguesser.backend.dto.UserDto;
+import com.songguesser.backend.dto.UserProfileDto;
 import com.songguesser.backend.dto.UserRankingDto;
 import com.songguesser.backend.model.entity.User;
+import com.songguesser.backend.model.repository.GameRepository;
 import com.songguesser.backend.model.repository.UserRepository;
 
 import java.util.List;
@@ -16,6 +19,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     public void syncUser(UserDto dto) {
 
@@ -42,6 +48,31 @@ public class UserService {
                 return dto;
             })
             .toList();
+    }
+
+    public UserProfileDto getUserProfile(String keycloakId) {
+        User user = userRepository.findByKeycloakId(keycloakId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        long gamesPlayed = gameRepository.countByUser(user);
+        UserProfileDto dto = new UserProfileDto();
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setTotalScore(user.getTotalScore());
+        dto.setGamesPlayed(gamesPlayed);
+        dto.setAvatarUrl(user.getAvatarUrl());
+        return dto;
+    }
+
+    public void updateProfile(String keycloakId, UpdateProfileDto dto) {
+        User user = userRepository.findByKeycloakId(keycloakId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        if (dto.getUsername() != null) {
+            user.setUsername(dto.getUsername());
+        }
+        if (dto.getAvatarUrl() != null) {
+            user.setAvatarUrl(dto.getAvatarUrl());
+        }
+        userRepository.save(user);
     }
 
 }
