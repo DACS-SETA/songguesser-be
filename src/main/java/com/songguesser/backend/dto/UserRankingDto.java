@@ -8,4 +8,5 @@ public class UserRankingDto {
     private String username;
     private String email;
     private Integer totalScore;
+    private Integer gamesPlayed;
 }

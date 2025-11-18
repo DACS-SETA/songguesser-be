@@ -45,6 +45,7 @@ public class UserService {
                 dto.setUsername(u.getUsername());
                 dto.setEmail(u.getEmail());
                 dto.setTotalScore(u.getTotalScore());
+                dto.setGamesPlayed(u.getGamesPlayed() != null ? u.getGamesPlayed() : 0);
                 return dto;
             })
             .toList();
