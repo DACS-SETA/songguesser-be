@@ -18,4 +18,4 @@ feign:
         readTimeout: 60000
         loggerLevel: basic
       itunesconnector:
-        url: http://localhost:9002/conector
+        url: http://ms-conector:9002/conector
